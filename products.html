@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Our Products & Prices</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; }
+    table {
+      border-collapse: collapse;
+      width: 60%;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+
+  <script>
+    function loadProducts() {
+
+      // ✅ Products added here
+      const products = [
+        { name: "Aashirvaad Atta (5kg)", price: 280 },
+        { name: "Fortune Sunflower Oil (1L)", price: 155 },
+        { name: "Tata Salt (1kg)", price: 28 },
+        { name: "Toor Dal (1kg)", price: 140 },
+        { name: "Sugar (1kg)", price: 45 }
+      ];
+
+      const tbody = document.getElementById('products');
+
+      products.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${p.name}</td><td>₹ ${p.price}</td>`;
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+</head>
+
+<body onload="loadProducts()">
+
+  <h2>🛍️ Our Products & Prices</h2>
+
+  <table>
+    <tr>
+      <th>Product Name</th>
+      <th>Price</th>
+    </tr>
+    <tbody id="products"></tbody>
+  </table>
+
+</body>
+</html>
