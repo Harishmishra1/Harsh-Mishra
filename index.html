@@ -12,19 +12,6 @@
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       }
-      table {
-        border-collapse: collapse;
-        width: 60%;
-        margin: 20px 0;
-      }
-      table, th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
       .photos-link {
         display: inline-block;
         margin: 10px 0;
@@ -35,32 +22,48 @@
         border-radius: 6px;
         font-weight: bold;
       }
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin-top: 10px;
+      }
+      th, td {
+        border: 1px solid #333;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
     </style>
 
     <script>
       async function loadProducts() {
         try {
-          // Replace this with your deployed Google Apps Script URL
-          const sheetURL = 'https://script.google.com/macros/s/AKfycbxxxx/exec';
-          
-          const response = await fetch(sheetURL);
-          const products = await response.json();
-          const tbody = document.getElementById('product-table-body');
+          const csvUrl = 'https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv';
+          const response = await fetch(csvUrl);
+          const csvText = await response.text();
 
-          products.forEach(p => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${p.name}</td><td>₹ ${p.price}</td>`;
-            tbody.appendChild(row);
-          });
+          const lines = csvText.split('\n');
+          const tbody = document.getElementById('product-table-body');
+          tbody.innerHTML = '';
+
+          // skip header row (assume first row is headers)
+          for (let i = 1; i < lines.length; i++) {
+            const cells = lines[i].split(',');
+            if (cells.length >= 2 && cells[0].trim() !== '') {
+              const row = document.createElement('tr');
+              row.innerHTML = `<td>${cells[0].trim()}</td><td>₹ ${cells[1].trim()}</td>`;
+              tbody.appendChild(row);
+            }
+          }
         } catch (e) {
-          console.error('Unable to load products from Google Sheet', e);
+          console.error('Unable to load products:', e);
         }
       }
-
-      window.onload = loadProducts;
     </script>
   </head>
-  <body>
+  <body onload="loadProducts()">
 
     <table cellspacing="50">
       <tr>
@@ -71,10 +74,7 @@
           <h1>महाराज जनरल स्टोर</h1>
           <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
           <p>
-            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! 
-            महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। 
-            यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। 
-            हमारा उद्देश्य है — “गुणवत्ता, विश्वास और उचित मूल्य” के साथ हर ग्राहक की ज़रूरत पूरी करना।
+            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। हमारा उद्देश्य है — “गुणवत्ता, विश्वास और उचित मूल्य” के साथ हर ग्राहक की ज़रूरत पूरी करना। 📍महाराज जनरल स्टोर – जहाँ हर ग्राहक हमारा परिवार है।
           </p>
         </td>
       </tr>
@@ -87,6 +87,7 @@
       Sangam Vihar Colony, Haveliya, Jhusi,<br>
       Prayagraj, Uttar Pradesh 211019
     </p>
+
     <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">View on Google Maps</a>
 
     <hr>
@@ -108,17 +109,14 @@
 
     <hr>
 
+    <!-- 🛍️ PRODUCTS TABLE -->
     <h3>🛍️ Our Products & Prices</h3>
     <table>
-      <thead>
-        <tr>
-          <th>Product Name</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody id="product-table-body">
-        <!-- Products will be dynamically loaded here from Google Sheet -->
-      </tbody>
+      <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+      </tr>
+      <tbody id="product-table-body"></tbody>
     </table>
 
     <hr>
