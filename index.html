@@ -1,84 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>महाराज जनरल स्टोर</title>
-    <style>
-      body { font-family: Arial, sans-serif; }
-      .gallery img {
-        width: 300px;
-        height: auto;
-        margin: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      }
-      .photos-link {
-        display: inline-block;
-        margin: 10px 0;
-        padding: 10px 16px;
-        background: #4285F4;
-        color: white;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: bold;
-      }
-      table {
-        border-collapse: collapse;
-        width: 80%;
-        margin-top: 10px;
-      }
-      th, td {
-        border: 1px solid #333;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-
-    <script>
-      async function loadProducts() {
-        try {
-          const csvUrl = 'https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv';
-          const response = await fetch(csvUrl);
-          const csvText = await response.text();
-
-          const lines = csvText.split('\n');
-          const tbody = document.getElementById('product-table-body');
-          tbody.innerHTML = '';
-
-          // skip header row (assume first row is headers)
-          for (let i = 1; i < lines.length; i++) {
-            const cells = lines[i].split(',');
-            if (cells.length >= 2 && cells[0].trim() !== '') {
-              const row = document.createElement('tr');
-              row.innerHTML = `<td>${cells[0].trim()}</td><td>₹ ${cells[1].trim()}</td>`;
-              tbody.appendChild(row);
-            }
-          }
-        } catch (e) {
-          console.error('Unable to load products:', e);
-        }
-      }
-    </script>
-  </head>
-  <body onload="loadProducts()">
-
-    <table cellspacing="50">
-      <tr>
-        <td>
-          <img src="circle-cropped.png" alt="Store Logo" width="180" height="180">
-        </td>
-        <td>
-          <h1>महाराज जनरल स्टोर</h1>
-          <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
-          <p>
-            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। हमारा उद्देश्य है — “गुणवत्ता, विश्वास और उचित मूल्य” के साथ हर ग्राहक की ज़रूरत पूरी करना। 📍महाराज जनरल स्टोर – जहाँ हर ग्राहक हमारा परिवार है।
-          </p>
-        </td>
-      </tr>
-    </table>
+<!DOCTYPE html> <html lang="en" dir="ltr"> <head> <meta charset="utf-8"> <title> महाराज जनरल स्टोर </title> <style> .gallery img { width: 300px; margin: 10px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); } </style> </head> <body> <table cellspacing="100"> <tr> <td> <img src="circle-cropped.png" alt="Harish Mishra" width="200" height="200"> </td> <td> <h1>महाराज जनरल स्टोर</h1> <p><em>महाराज जनरल स्टोर <strong>जहाँ हर ग्राहक हमारा परिवार है।</strong></em></p> <p> जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। हमारा उद्देश्य है — <strong>“गुणवत्ता, विश्वास और उचित मूल्य”</strong> के साथ हर ग्राहक की ज़रूरत पूरी करना। </p> </td> </tr> </table>
 
     <hr>
 
@@ -143,3 +63,4 @@
 
   </body>
 </html>
+
