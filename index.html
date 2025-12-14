@@ -12,6 +12,19 @@
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       }
+      table {
+        border-collapse: collapse;
+        width: 60%;
+        margin: 20px 0;
+      }
+      table, th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
       .photos-link {
         display: inline-block;
         margin: 10px 0;
@@ -27,7 +40,10 @@
     <script>
       async function loadProducts() {
         try {
-          const response = await fetch('products.json');
+          // Replace this with your deployed Google Apps Script URL
+          const sheetURL = 'https://script.google.com/macros/s/AKfycbxxxx/exec';
+          
+          const response = await fetch(sheetURL);
           const products = await response.json();
           const tbody = document.getElementById('product-table-body');
 
@@ -37,9 +53,11 @@
             tbody.appendChild(row);
           });
         } catch (e) {
-          console.error('Unable to load products.json');
+          console.error('Unable to load products from Google Sheet', e);
         }
       }
+
+      window.onload = loadProducts;
     </script>
   </head>
   <body>
@@ -53,7 +71,10 @@
           <h1>महाराज जनरल स्टोर</h1>
           <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
           <p>
-            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। हमारा उद्देश्य है — “गुणवत्ता, विश्वास और उचित मूल्य” के साथ हर ग्राहक की ज़रूरत पूरी करना। 📍महाराज जनरल स्टोर – जहाँ हर ग्राहक हमारा परिवार है।
+            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! 
+            महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। 
+            यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। 
+            हमारा उद्देश्य है — “गुणवत्ता, विश्वास और उचित मूल्य” के साथ हर ग्राहक की ज़रूरत पूरी करना।
           </p>
         </td>
       </tr>
@@ -66,7 +87,6 @@
       Sangam Vihar Colony, Haveliya, Jhusi,<br>
       Prayagraj, Uttar Pradesh 211019
     </p>
-
     <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">View on Google Maps</a>
 
     <hr>
@@ -81,23 +101,25 @@
     <hr>
 
     <h3>📸 Store Photos</h3>
-
-    
-
-    <!-- Attached Images Display -->
     <div class="gallery">
       <img src="k1.jpg" alt="Maharaj General Store Front View">
       <img src="k2.jpg" alt="Maharaj General Store Inside View">
     </div>
 
-    
-
     <hr>
 
-    <!-- 🛍️ PRODUCTS LINK -->
-    <h3>
-      <a href="products.html">Our Products & Prices</a>
-    </h3>
+    <h3>🛍️ Our Products & Prices</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody id="product-table-body">
+        <!-- Products will be dynamically loaded here from Google Sheet -->
+      </tbody>
+    </table>
 
     <hr>
 
