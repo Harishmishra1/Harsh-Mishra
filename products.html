@@ -1,23 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <title>Our Products & Prices</title>
-
+  <meta charset="utf-8">
+  <title>महाराज जनरल स्टोर</title>
   <style>
-    body { font-family: Arial, sans-serif; }
+    body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+    .store-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .store-header img {
+      width: 180px;
+      height: 180px;
+      border-radius: 8px;
+    }
+    .gallery img {
+      width: 300px;
+      height: auto;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    a.photos-link {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 10px 16px;
+      background: #4285F4;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
     table {
       border-collapse: collapse;
       width: 80%;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     th, td {
       border: 1px solid #333;
-      padding: 10px;
+      padding: 8px;
       text-align: left;
     }
     th {
       background-color: #f2f2f2;
+    }
+    hr {
+      margin: 30px 0;
     }
   </style>
 
@@ -29,7 +60,7 @@
         const csvText = await response.text();
 
         const lines = csvText.split('\n');
-        const tbody = document.getElementById('products');
+        const tbody = document.getElementById('product-table-body');
         tbody.innerHTML = '';
 
         for (let i = 1; i < lines.length; i++) {
@@ -40,21 +71,92 @@
             tbody.appendChild(row);
           }
         }
-      } catch (error) {
-        console.error('Error loading products:', error);
+      } catch (e) {
+        console.error('Unable to load products:', e);
       }
     }
   </script>
 </head>
 
 <body onload="loadProducts()">
-  <h2>🛍️ Our Products & Prices</h2>
+
+  <!-- Header with logo and description -->
+  <div class="store-header">
+    <img src="circle-cropped.png" alt="Store Logo">
+    <div>
+      <h1>महाराज जनरल स्टोर</h1>
+      <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
+      <p>
+        जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है। यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं। हमारा उद्देश्य है — “गुणवत्ता, विश्वास और उचित मूल्य” के साथ हर ग्राहक की ज़रूरत पूरी करना। 📍महाराज जनरल स्टोर – जहाँ हर ग्राहक हमारा परिवार है।
+      </p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Store Address -->
+  <h3>📍 Store Address</h3>
+  <p>
+    Sangam Vihar Colony, Haveliya, Jhusi,<br>
+    Prayagraj, Uttar Pradesh 211019
+  </p>
+  <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">View on Google Maps</a>
+
+  <hr>
+
+  <!-- Order Now Button -->
+  <h3>🛒 Order Now</h3>
+  <a href="https://wa.me/919807439655" target="_blank"
+     style="text-decoration:none; color:white; background-color:#25D366;
+            padding:12px 18px; border-radius:6px; font-weight:bold;">
+    📲 Order on WhatsApp
+  </a>
+
+  <hr>
+
+  <!-- Store Photos -->
+  <h3>📸 Store Photos</h3>
+  <div class="gallery">
+    <img src="k1.jpg" alt="Maharaj General Store Front View">
+    <img src="k2.jpg" alt="Maharaj General Store Inside View">
+  </div>
+
+  <hr>
+
+  <!-- Products Table -->
+  <h3>🛍️ Our Products & Prices</h3>
   <table>
     <tr>
       <th>Product Name</th>
       <th>Price</th>
     </tr>
-    <tbody id="products"></tbody>
+    <tbody id="product-table-body"></tbody>
   </table>
+
+  <hr>
+
+  <!-- About Us -->
+  <h3>About Us</h3>
+  <p>
+    हम आपके लिए ताज़ा, शुद्ध और किफ़ायती किराना सामान उपलब्ध कराते हैं।
+    गुणवत्ता, भरोसा और तेज़ सेवा ही हमारी पहचान है।
+  </p>
+
+  <hr>
+
+  <!-- Feedback -->
+  <h3>Feedback</h3>
+  <p>
+    <a href="Feedback.html">Click here to give feedback</a>
+  </p>
+
+  <hr>
+
+  <!-- Declaration -->
+  <h3>Declaration</h3>
+  <p>
+    I hereby declare that the above mentioned details are true to the best of my knowledge.
+  </p>
+
 </body>
 </html>
