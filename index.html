@@ -2,33 +2,59 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title> महाराज जनरल स्टोर </title>
-
+    <title>महाराज जनरल स्टोर</title>
     <style>
+      body { font-family: Arial, sans-serif; }
       .gallery img {
         width: 300px;
+        height: auto;
         margin: 10px;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       }
+      .photos-link {
+        display: inline-block;
+        margin: 10px 0;
+        padding: 10px 16px;
+        background: #4285F4;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+      }
     </style>
-  </head>
 
+    <script>
+      async function loadProducts() {
+        try {
+          const response = await fetch('products.json');
+          const products = await response.json();
+          const tbody = document.getElementById('product-table-body');
+
+          products.forEach(p => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${p.name}</td><td>₹ ${p.price}</td>`;
+            tbody.appendChild(row);
+          });
+        } catch (e) {
+          console.error('Unable to load products.json');
+        }
+      }
+    </script>
+  </head>
   <body>
 
-    <table cellspacing="100">
+    <table cellspacing="50">
       <tr>
         <td>
-          <img src="circle-cropped.png" alt="Harish Mishra" width="200" height="200">
+          <img src="circle-cropped.png" alt="Store Logo" width="180" height="180">
         </td>
         <td>
           <h1>महाराज जनरल स्टोर</h1>
-          <p><em>महाराज जनरल स्टोर <strong>जहाँ हर ग्राहक हमारा परिवार है।</strong></em></p>
+          <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
           <p>
-            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल स्टोर आपके शहर का
-            विश्वसनीय किराना और पूजा सामग्री स्टोर है। यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ,
-            पूजा सामग्री, मसाले, तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं।
-            हमारा उद्देश्य है — <strong>“गुणवत्ता, विश्वास और उचित मूल्य”</strong> के साथ हर ग्राहक की ज़रूरत पूरी करना।
+            जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! यहाँ सभी दैनिक उपयोग की वस्तुएँ,
+            पूजा सामग्री, मसाले, स्नैक्स और घरेलू सामान उचित दामों पर उपलब्ध हैं।
           </p>
         </td>
       </tr>
@@ -36,90 +62,78 @@
 
     <hr>
 
-    <h3>Store Address & Directions</h3>
-
-    <table width="100%" cellpadding="10">
-      <tr>
-        <td width="70%" valign="top">
-          <p>
-            <strong>Address:</strong><br>
-            Sangam Vihar Colony, Haveliya, Jhusi,<br>
-            Prayagraj, Uttar Pradesh 211019
-          </p>
-          <p>
-            <strong>Directions:</strong><br>
-            <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">
-              View on Google Maps
-            </a>
-          </p>
-        </td>
-
-        <td width="30%" valign="top" align="center">
-          <h3>Order Now</h3>
-          <a href="https://wa.me/919807439655" target="_blank"
-             style="text-decoration:none; color:white; background-color:#25D366;
-                    padding:12px 18px; border-radius:6px; font-weight:bold;">
-            📲 Order on WhatsApp
-          </a>
-        </td>
-      </tr>
-    </table>
-
-    <hr>
-
-    <h3>About Us</h3>
-    <p><strong>आपका भरोसेमंद किराना स्टोर</strong></p>
-
+    <h3>📍 Store Address</h3>
     <p>
-      हम आपके लिए लाते हैं रोज़मर्रा की ज़रूरतों का हर सामान — ताज़ा, शुद्ध और किफ़ायती दामों पर।
-      गुणवत्ता, सुविधा और तेज़ सेवा हमारी पहचान है।
+      Sangam Vihar Colony, Haveliya, Jhusi,<br>
+      Prayagraj, Uttar Pradesh 211019
     </p>
 
+    <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">View on Google Maps</a>
+
     <hr>
 
-    <!-- 🔽 STORE PHOTOS ADDED HERE -->
-    <h3>Store Photos</h3>
+    <h3>🛒 Order Now</h3>
+    <a href="https://wa.me/919807439655" target="_blank"
+       style="text-decoration:none; color:white; background-color:#25D366;
+              padding:12px 18px; border-radius:6px; font-weight:bold;">
+      📲 Order on WhatsApp
+    </a>
 
+    <hr>
+
+    <h3>📸 Store Photos</h3>
+
+    <!-- Photos Link (Google Drive / Gallery) -->
+    <a class="photos-link" href="https://drive.google.com" target="_blank">
+      View All Store Photos
+    </a>
+
+    <!-- Attached Images Display -->
     <div class="gallery">
       <img src="k1.jpg" alt="Maharaj General Store Front View">
       <img src="k2.jpg" alt="Maharaj General Store Inside View">
     </div>
 
-    <hr>
-
-    <h3>Work Experience</h3>
-    <p>Fresher</p>
+    <p><em>ऊपर दी गई तस्वीरें हमारे स्टोर की वास्तविक झलक दिखाती हैं।</em></p>
 
     <hr>
 
-    <h3>Skills</h3>
-    <table>
-      <tr><td>Java</td><td>🌟🌟🌟🌟🌟</td></tr>
-      <tr><td>C++</td><td>🌟🌟🌟🌟</td></tr>
-      <tr><td>Python</td><td>🌟🌟🌟</td></tr>
-      <tr><td>CSS</td><td>🌟🌟</td></tr>
-      <tr><td>HTML</td><td>🌟</td></tr>
-    </table>
+    <!-- 🛍️ PRODUCTS SECTION -->
+    <h3>🛍️ Our Products & Prices</h3>
 
-    <hr>
-
-    <h4>Qualification</h4>
-    <table border="1">
+    <table border="1" cellpadding="10" width="60%">
       <tr>
-        <th>Class</th>
-        <th>Marks(%)</th>
-        <th>College Name</th>
+        <th>Product Name</th>
+        <th>Price</th>
       </tr>
-      <tr><td>B.Tech</td><td>6.3 CGPA</td><td>SIET</td></tr>
-      <tr><td>12th</td><td>57%</td><td>MGIC</td></tr>
-      <tr><td>10th</td><td>81%</td><td>RDMIC</td></tr>
+      <tbody id="product-table-body">
+        <!-- Products loaded from products.json -->
+      </tbody>
     </table>
 
-    <h3><a href="Personal details.html">Personal details</a></h3>
-    <h3><a href="Feedback.html">Feedback</a></h3>
+    <script>loadProducts();</script>
+
+    <hr>
+
+    <h3>About Us</h3>
+    <p>
+      हम आपके लिए ताज़ा, शुद्ध और किफ़ायती किराना सामान उपलब्ध कराते हैं।
+      गुणवत्ता, भरोसा और तेज़ सेवा ही हमारी पहचान है।
+    </p>
+
+    <hr>
+
+    <h3>Feedback</h3>
+    <p>
+      <a href="Feedback.html">Click here to give feedback</a>
+    </p>
+
+    <hr>
 
     <h3>Declaration</h3>
-    <p>I hereby declare that the above mentioned details are true to the best of my knowledge.</p>
+    <p>
+      I hereby declare that the above mentioned details are true to the best of my knowledge.
+    </p>
 
   </body>
 </html>
