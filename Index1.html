@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>महाराज जनरल स्टोर</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .gallery img {
+        width: 300px;
+        height: auto;
+        margin: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+      .photos-link {
+        display: inline-block;
+        margin: 10px 0;
+        padding: 10px 16px;
+        background: #4285f4;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #333;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .logo-intro {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      /* ✅ ADDED */
+      .whatsapp-btn {
+        background-color: #25d366;
+        color: white;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+    </style>
+
+    <!-- ✅ UPDATED SCRIPT (ONLY REQUIRED CHANGE) -->
+    <script>
+      async function loadProducts() {
+        try {
+          const csvUrl =
+            "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
+
+          const response = await fetch(csvUrl);
+          const csvText = await response.text();
+
+          const lines = csvText.split("\n");
+          const tbody = document.getElementById("product-table-body");
+          tbody.innerHTML = "";
+
+          for (let i = 1; i < lines.length; i++) {
+            const cells = lines[i].split(",");
+
+            if (cells.length >= 2 && cells[0].trim() !== "") {
+              const row = document.createElement("tr");
+
+              row.innerHTML = `
+                <td>
+                  <input type="checkbox"
+                    data-name="${cells[0].trim()}"
+                    data-price="${cells[1].trim()}">
+                </td>
+                <td>${cells[0].trim()}</td>
+                <td>₹ ${cells[1].trim()}</td>
+              `;
+
+              tbody.appendChild(row);
+            }
+          }
+        } catch (e) {
+          console.error("Unable to load products:", e);
+        }
+      }
+    </script>
+  </head>
+
+  <body onload="loadProducts()">
+    <!-- Logo and Intro Section -->
+    <div class="logo-intro">
+      <div>
+        <img
+          src="circle-cropped.png"
+          alt="Store Logo"
+          width="180"
+          height="180"
+        />
+      </div>
+      <div>
+        <h1>महाराज जनरल स्टोर</h1>
+        <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
+        <p>
+          जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल
+          स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है।
+          यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले,
+          तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं।
+        </p>
+      </div>
+    </div>
+
+    <hr />
+
+    <h3>📍 Store Address</h3>
+    <p>
+      Sangam Vihar Colony, Haveliya, Jhusi,<br />
+      Prayagraj, Uttar Pradesh 211019
+    </p>
+    <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">
+      View on Google Maps
+    </a>
+
+    <hr />
+
+    <h3>🛒 Order Now</h3>
+    <a
+      href="https://wa.me/919807439655"
+      target="_blank"
+      style="
+        text-decoration: none;
+        color: white;
+        background-color: #25d366;
+        padding: 12px 18px;
+        border-radius: 6px;
+        font-weight: bold;
+      "
+    >
+      📲 Order on WhatsApp
+    </a>
+
+    <p>
+      🛒 ₹999 या उससे अधिक के ऑर्डर पर 100 मीटर की दूरी में मुफ्त डिलीवरी।<br>
+      🚚 ₹999 से कम के ऑर्डर पर डिलीवरी चार्ज ₹50 लागू।<br>
+      ⏰ डिलीवरी समय: दोपहर 1 बजे से 3 बजे और रात 8 बजे से 9 बजे तक।
+    </p>
+
+    <hr />
+
+    <h3>📸 Store Photos</h3>
+    <div class="gallery">
+      <img src="k1.jpg" alt="Maharaj General Store Front View" />
+      <img src="k2.jpg" alt="Maharaj General Store Inside View" />
+    </div>
+
+    <hr />
+
+    <h3>🛍️ Our Products & Prices</h3>
+
+    <table>
+      <tr>
+        <th>Select</th>
+        <th>Product Name</th>
+        <th>Price</th>
+      </tr>
+      <tbody id="product-table-body"></tbody>
+    </table>
+
+    <br />
+
+    <!-- ✅ ADDED BUTTON -->
+    <button onclick="orderOnWhatsApp()" class="whatsapp-btn">
+      Order Selected on WhatsApp
+    </button>
+
+    <hr />
+
+    <h3>About Us</h3>
+    <p>
+      हम आपके लिए ताज़ा, शुद्ध और किफ़ायती किराना सामान उपलब्ध कराते हैं।
+      गुणवत्ता, भरोसा और तेज़ सेवा ही हमारी पहचान है।
+    </p>
+
+    <!-- ✅ ADDED SCRIPT -->
+    <script>
+      function orderOnWhatsApp() {
+        let selectedItems = [];
+        let total = 0;
+
+        document.querySelectorAll(
+          '#product-table-body input[type="checkbox"]:checked'
+        ).forEach(cb => {
+          let name = cb.dataset.name;
+          let price = parseFloat(cb.dataset.price);
+          selectedItems.push(`${name} – ₹${price}`);
+          total += price;
+        });
+
+        if (selectedItems.length === 0) {
+          alert("कृपया कम से कम एक प्रोडक्ट चुनें");
+          return;
+        }
+
+        let message =
+          "Hello, I want to order:\n\n" +
+          selectedItems.join("\n") +
+          "\n\nTotal: ₹" + total;
+
+        let url =
+          "https://wa.me/919807439655?text=" +
+          encodeURIComponent(message);
+
+        window.open(url, "_blank");
+      }
+    </script>
+  </body>
+</html>
