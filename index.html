@@ -44,9 +44,8 @@ th { background:#f2f2f2; }
 </style>
 </head>
 
-<body onload="loadProducts()">
+<body>
 
-<!-- SHOP INTRO -->
 <div class="logo-intro">
 <img src="circle-cropped.png" width="180" height="180">
 <div>
@@ -144,7 +143,7 @@ async function loadProducts() {
 
   products = [];
   for (let i = 1; i < lines.length; i++) {
-    let [name, price, offer] = lines[i].split(",");
+    const [name, price, offer] = lines[i].split(",");
     if (name && price) {
       products.push({
         name: name.trim(),
@@ -157,7 +156,7 @@ async function loadProducts() {
 }
 
 function renderProducts() {
-  const q = searchBox.value.toLowerCase();
+  const q = document.getElementById("searchBox").value.toLowerCase();
   const body = document.getElementById("product-body");
   body.innerHTML = "";
 
@@ -167,9 +166,8 @@ function renderProducts() {
 }
 
 function productRow(p) {
-  let qty = cart[p.name] || 0;
-  return `
-  <tr>
+  const qty = cart[p.name] || 0;
+  return `<tr>
     <td>${p.name}</td>
     <td>₹${p.price}</td>
     <td>
@@ -181,16 +179,16 @@ function productRow(p) {
 }
 
 function showProducts() {
-  products-section.style.display="block";
-  offers-section.style.display="none";
-  cart-section.style.display="none";
+  document.getElementById("products-section").style.display="block";
+  document.getElementById("offers-section").style.display="none";
+  document.getElementById("cart-section").style.display="none";
   renderProducts();
 }
 
 function showOffers() {
-  products-section.style.display="none";
-  offers-section.style.display="block";
-  cart-section.style.display="none";
+  document.getElementById("products-section").style.display="none";
+  document.getElementById("offers-section").style.display="block";
+  document.getElementById("cart-section").style.display="none";
 
   const body = document.getElementById("offer-body");
   body.innerHTML = "";
@@ -198,9 +196,9 @@ function showOffers() {
 }
 
 function showCart() {
-  products-section.style.display="none";
-  offers-section.style.display="none";
-  cart-section.style.display="block";
+  document.getElementById("products-section").style.display="none";
+  document.getElementById("offers-section").style.display="none";
+  document.getElementById("cart-section").style.display="block";
   renderCart();
 }
 
@@ -217,13 +215,12 @@ function renderCart() {
   let total = 0;
 
   for (let name in cart) {
-    let p = products.find(x => x.name === name);
-    let qty = cart[name];
-    let price = p.price * qty;
+    const p = products.find(x => x.name === name);
+    const qty = cart[name];
+    const price = p.price * qty;
     total += price;
 
-    body.innerHTML += `
-    <tr>
+    body.innerHTML += `<tr>
       <td>${name}</td>
       <td>
         <button class="qty-btn" onclick="updateQty('${name}',-1)">−</button>
@@ -240,13 +237,11 @@ function renderCart() {
 function orderOnWhatsApp() {
   let msg = "Hello, I want to order:\n\n";
   let total = 0;
-
   for (let name in cart) {
     let p = products.find(x => x.name === name);
     msg += `${name} x ${cart[name]} = ₹${p.price * cart[name]}\n`;
     total += p.price * cart[name];
   }
-
   msg += `\nTotal: ₹${total}`;
   window.open("https://wa.me/919807439655?text=" + encodeURIComponent(msg));
 }
