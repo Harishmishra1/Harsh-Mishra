@@ -21,13 +21,19 @@
 
     th { background-color: #f2f2f2; }
 
-    .cart-btn {
+    .qty-btn {
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: none;
       background: #ff9800;
       color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      cursor: pointer;
+    }
+
+    .qty-box {
+      padding: 4px 10px;
+      font-weight: bold;
     }
 
     .remove-btn {
@@ -91,9 +97,9 @@
             <td>${name}</td>
             <td>₹ ${price}</td>
             <td>
-              <button class="cart-btn" onclick="addToCart('${name}', ${price})">
-                Add to Cart
-              </button>
+              <button class="qty-btn" onclick="changeQty('${name}', ${price}, -1)">−</button>
+              <span class="qty-box" id="qty-${name}">0</span>
+              <button class="qty-btn" onclick="changeQty('${name}', ${price}, 1)">+</button>
             </td>
           `;
           tbody.appendChild(row);
@@ -101,20 +107,26 @@
       }
     }
 
-    function addToCart(name, price) {
-      const existing = cart.find(item => item.name === name);
+    function changeQty(name, price, delta) {
+      let item = cart.find(p => p.name === name);
 
-      if (existing) {
-        existing.qty += 1;
-      } else {
+      if (!item && delta > 0) {
         cart.push({ name, price, qty: 1 });
+      } else if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) {
+          cart = cart.filter(p => p.name !== name);
+        }
       }
+
+      updateQtyUI(name);
       renderCart();
     }
 
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      renderCart();
+    function updateQtyUI(name) {
+      const qtySpan = document.getElementById(`qty-${name}`);
+      const item = cart.find(p => p.name === name);
+      qtySpan.innerText = item ? item.qty : 0;
     }
 
     function renderCart() {
@@ -136,6 +148,13 @@
       });
 
       document.getElementById("cart-total").innerText = total;
+    }
+
+    function removeFromCart(index) {
+      const name = cart[index].name;
+      cart.splice(index, 1);
+      updateQtyUI(name);
+      renderCart();
     }
 
     function placeOrderFromCart() {
@@ -189,7 +208,7 @@
     <tr>
       <th>Product Name</th>
       <th>Price</th>
-      <th>Add</th>
+      <th>Quantity</th>
     </tr>
     <tbody id="product-table-body"></tbody>
   </table>
