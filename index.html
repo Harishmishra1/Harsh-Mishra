@@ -142,7 +142,7 @@
         const div = document.createElement("div");
         div.innerHTML = `
           ${item.name} × ${item.qty} = ₹${itemTotal}
-          <button class="remove-btn" onclick="removeFromCart(${index})">❌</button>
+          <button class="remove-btn" onclick="removeOne(${index})">❌</button>
         `;
         cartList.appendChild(div);
       });
@@ -150,10 +150,18 @@
       document.getElementById("cart-total").innerText = total;
     }
 
-    function removeFromCart(index) {
-      const name = cart[index].name;
-      cart.splice(index, 1);
-      updateQtyUI(name);
+    // ✅ REMOVE ONLY ONE QUANTITY
+    function removeOne(index) {
+      cart[index].qty -= 1;
+
+      if (cart[index].qty <= 0) {
+        const name = cart[index].name;
+        cart.splice(index, 1);
+        updateQtyUI(name);
+      } else {
+        updateQtyUI(cart[index].name);
+      }
+
       renderCart();
     }
 
