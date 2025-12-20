@@ -136,23 +136,28 @@ let products = [];
 let cart = {};
 
 async function loadProducts() {
-  const url = "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
-  const res = await fetch(url);
-  const text = await res.text();
-  const lines = text.split("\n");
+  try {
+    const csvUrl = "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
+    const response = await fetch(csvUrl);
+    const text = await response.text();
+    const lines = text.trim().split("\n");
 
-  products = [];
-  for (let i = 1; i < lines.length; i++) {
-    const [name, price, offer] = lines[i].split(",");
-    if (name && price) {
-      products.push({
-        name: name.trim(),
-        price: Number(price.trim()),
-        offer: offer?.trim().toUpperCase() === "YES"
-      });
+    products = [];
+    for (let i = 1; i < lines.length; i++) {
+      const [name, price, offer] = lines[i].split(",");
+      if (name && price) {
+        products.push({
+          name: name.trim(),
+          price: Number(price.trim()),
+          offer: offer?.trim().toUpperCase() === "YES"
+        });
+      }
     }
+
+    renderProducts();
+  } catch(e) {
+    console.error("Failed to load products. Make sure the sheet is published.", e);
   }
-  renderProducts();
 }
 
 function renderProducts() {
@@ -162,20 +167,18 @@ function renderProducts() {
 
   products
     .filter(p => p.name.toLowerCase().includes(q))
-    .forEach(p => body.innerHTML += productRow(p));
-}
-
-function productRow(p) {
-  const qty = cart[p.name] || 0;
-  return `<tr>
-    <td>${p.name}</td>
-    <td>₹${p.price}</td>
-    <td>
-      <button class="qty-btn" onclick="updateQty('${p.name}',-1)">−</button>
-      ${qty}
-      <button class="qty-btn" onclick="updateQty('${p.name}',1)">+</button>
-    </td>
-  </tr>`;
+    .forEach(p => {
+      const qty = cart[p.name] || 0;
+      body.innerHTML += `<tr>
+        <td>${p.name}</td>
+        <td>₹${p.price}</td>
+        <td>
+          <button class="qty-btn" onclick="updateQty('${p.name}',-1)">−</button>
+          ${qty}
+          <button class="qty-btn" onclick="updateQty('${p.name}',1)">+</button>
+        </td>
+      </tr>`;
+    });
 }
 
 function showProducts() {
@@ -192,7 +195,18 @@ function showOffers() {
 
   const body = document.getElementById("offer-body");
   body.innerHTML = "";
-  products.filter(p => p.offer).forEach(p => body.innerHTML += productRow(p));
+  products.filter(p => p.offer).forEach(p => {
+    const qty = cart[p.name] || 0;
+    body.innerHTML += `<tr>
+      <td>${p.name}</td>
+      <td>₹${p.price}</td>
+      <td>
+        <button class="qty-btn" onclick="updateQty('${p.name}',-1)">−</button>
+        ${qty}
+        <button class="qty-btn" onclick="updateQty('${p.name}',1)">+</button>
+      </td>
+    </tr>`;
+  });
 }
 
 function showCart() {
@@ -206,6 +220,7 @@ function updateQty(name, delta) {
   cart[name] = (cart[name] || 0) + delta;
   if (cart[name] <= 0) delete cart[name];
   renderProducts();
+  renderOffers();
   renderCart();
 }
 
@@ -237,14 +252,19 @@ function renderCart() {
 function orderOnWhatsApp() {
   let msg = "Hello, I want to order:\n\n";
   let total = 0;
+
   for (let name in cart) {
-    let p = products.find(x => x.name === name);
+    const p = products.find(x => x.name === name);
     msg += `${name} x ${cart[name]} = ₹${p.price * cart[name]}\n`;
     total += p.price * cart[name];
   }
+
   msg += `\nTotal: ₹${total}`;
   window.open("https://wa.me/919807439655?text=" + encodeURIComponent(msg));
 }
+
+// Initialize
+loadProducts();
 </script>
 
 </body>
