@@ -46,6 +46,16 @@
       cursor: pointer;
     }
 
+    .remove-btn {
+      background: #e53935;
+      color: white;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
     .order-search-bar {
       display: flex;
       gap: 10px;
@@ -59,7 +69,6 @@
       width: 220px;
     }
 
-    /* 🛒 CART SECTION */
     .cart-box {
       border: 2px dashed #25d366;
       padding: 12px;
@@ -110,8 +119,12 @@
 
     function addToCart(name, price) {
       if (cart.some(item => item.name === name)) return;
-
       cart.push({ name, price });
+      renderCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
       renderCart();
     }
 
@@ -121,11 +134,14 @@
 
       let total = 0;
 
-      cart.forEach(item => {
+      cart.forEach((item, index) => {
         total += item.price;
         const div = document.createElement("div");
         div.className = "cart-item";
-        div.textContent = `${item.name} – ₹${item.price}`;
+        div.innerHTML = `
+          ${item.name} – ₹${item.price}
+          <button class="remove-btn" onclick="removeFromCart(${index})">❌</button>
+        `;
         cartList.appendChild(div);
       });
 
@@ -190,7 +206,6 @@
     <tbody id="product-table-body"></tbody>
   </table>
 
-  <!-- 🛒 CART SECTION -->
   <div class="cart-box">
     <h3>🛒 Your Cart</h3>
     <div id="cart-items"></div>
