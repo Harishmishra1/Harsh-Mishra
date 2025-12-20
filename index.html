@@ -34,8 +34,11 @@ th { background:#f2f2f2; }
   font-weight:bold;
 }
 
-.qty-btn { padding:4px 8px; cursor:pointer; }
-.remove-btn { border:none; background:none; cursor:pointer; font-size:18px; }
+.qty-btn {
+  padding:4px 8px;
+  cursor:pointer;
+  font-weight:bold;
+}
 
 #searchBox { padding:8px; width:250px; margin-top:10px; }
 </style>
@@ -43,6 +46,7 @@ th { background:#f2f2f2; }
 
 <body onload="loadProducts()">
 
+<!-- SHOP INTRO -->
 <div class="logo-intro">
 <img src="circle-cropped.png" width="180" height="180">
 <div>
@@ -111,7 +115,7 @@ Prayagraj, Uttar Pradesh 211019
 <!-- CART -->
 <div id="cart-section" style="display:none;">
 <table>
-<thead><tr><th>Product</th><th>Qty</th><th>Price</th><th></th></tr></thead>
+<thead><tr><th>Product</th><th>Qty</th><th>Price</th></tr></thead>
 <tbody id="cart-body"></tbody>
 </table>
 
@@ -153,7 +157,7 @@ async function loadProducts() {
 }
 
 function renderProducts() {
-  const q = document.getElementById("searchBox").value.toLowerCase();
+  const q = searchBox.value.toLowerCase();
   const body = document.getElementById("product-body");
   body.innerHTML = "";
 
@@ -163,24 +167,30 @@ function renderProducts() {
 }
 
 function productRow(p) {
+  let qty = cart[p.name] || 0;
   return `
   <tr>
     <td>${p.name}</td>
     <td>₹${p.price}</td>
-    <td><button onclick="addToCart('${p.name}')">Add</button></td>
+    <td>
+      <button class="qty-btn" onclick="updateQty('${p.name}',-1)">−</button>
+      ${qty}
+      <button class="qty-btn" onclick="updateQty('${p.name}',1)">+</button>
+    </td>
   </tr>`;
 }
 
 function showProducts() {
-  document.getElementById("products-section").style.display = "block";
-  document.getElementById("offers-section").style.display = "none";
-  document.getElementById("cart-section").style.display = "none";
+  products-section.style.display="block";
+  offers-section.style.display="none";
+  cart-section.style.display="none";
+  renderProducts();
 }
 
 function showOffers() {
-  document.getElementById("products-section").style.display = "none";
-  document.getElementById("offers-section").style.display = "block";
-  document.getElementById("cart-section").style.display = "none";
+  products-section.style.display="none";
+  offers-section.style.display="block";
+  cart-section.style.display="none";
 
   const body = document.getElementById("offer-body");
   body.innerHTML = "";
@@ -188,19 +198,16 @@ function showOffers() {
 }
 
 function showCart() {
-  document.getElementById("products-section").style.display = "none";
-  document.getElementById("offers-section").style.display = "none";
-  document.getElementById("cart-section").style.display = "block";
+  products-section.style.display="none";
+  offers-section.style.display="none";
+  cart-section.style.display="block";
   renderCart();
 }
 
-function addToCart(name) {
-  cart[name] = (cart[name] || 0) + 1;
-}
-
-function changeQty(name, delta) {
-  cart[name] += delta;
+function updateQty(name, delta) {
+  cart[name] = (cart[name] || 0) + delta;
   if (cart[name] <= 0) delete cart[name];
+  renderProducts();
   renderCart();
 }
 
@@ -219,12 +226,11 @@ function renderCart() {
     <tr>
       <td>${name}</td>
       <td>
-        <button class="qty-btn" onclick="changeQty('${name}',-1)">−</button>
+        <button class="qty-btn" onclick="updateQty('${name}',-1)">−</button>
         ${qty}
-        <button class="qty-btn" onclick="changeQty('${name}',1)">+</button>
+        <button class="qty-btn" onclick="updateQty('${name}',1)">+</button>
       </td>
       <td>₹${price}</td>
-      <td><button class="remove-btn" onclick="changeQty('${name}',-1)">✕</button></td>
     </tr>`;
   }
 
