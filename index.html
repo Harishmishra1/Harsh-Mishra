@@ -1,182 +1,213 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <title>महाराज जनरल स्टोर</title>
+<head>
+  <meta charset="utf-8" />
+  <title>महाराज जनरल स्टोर</title>
 
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      .gallery img {
-        width: 300px;
-        height: auto;
-        margin: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      }
-      table {
-        border-collapse: collapse;
-        width: 80%;
-        margin-top: 10px;
-      }
-      th, td {
-        border: 1px solid #333;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-      .logo-intro {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 20px;
-      }
-      .whatsapp-btn {
-        background-color: #25d366;
-        color: white;
-        padding: 12px 18px;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-      .order-search-bar {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-      }
-      #searchBox {
-        padding: 10px;
-        font-size: 15px;
-        width: 220px;
-      }
-    </style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
 
-    <script>
-      async function loadProducts() {
-        try {
-          const csvUrl =
-            "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
+    .gallery img {
+      width: 300px;
+      height: auto;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
 
-          const response = await fetch(csvUrl);
-          const csvText = await response.text();
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin-top: 10px;
+    }
 
-          const lines = csvText.split("\n");
-          const tbody = document.getElementById("product-table-body");
-          tbody.innerHTML = "";
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
 
-          for (let i = 1; i < lines.length; i++) {
-            const cells = lines[i].split(",");
+    th {
+      background-color: #f2f2f2;
+    }
 
-            if (cells.length >= 2 && cells[0].trim() !== "") {
-              const row = document.createElement("tr");
+    .logo-intro {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
 
-              row.innerHTML = `
-                <td>
-                  <input type="checkbox"
-                    data-name="${cells[0].trim()}"
-                    data-price="${cells[1].trim()}">
-                </td>
-                <td>${cells[0].trim()}</td>
-                <td>₹ ${cells[1].trim()}</td>
-              `;
+    .whatsapp-btn {
+      background-color: #25d366;
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-              tbody.appendChild(row);
-            }
-          }
-        } catch (e) {
-          console.error("Unable to load products:", e);
+    /* ✅ ADD TO CART BUTTON */
+    .cart-btn {
+      background: #ff9800;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .order-search-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    #searchBox {
+      padding: 8px;
+      font-size: 15px;
+      width: 220px;
+    }
+  </style>
+
+  <script>
+    async function loadProducts() {
+      const csvUrl =
+        "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
+
+      const response = await fetch(csvUrl);
+      const csvText = await response.text();
+
+      const lines = csvText.split("\n");
+      const tbody = document.getElementById("product-table-body");
+      tbody.innerHTML = "";
+
+      for (let i = 1; i < lines.length; i++) {
+        const cells = lines[i].split(",");
+
+        if (cells.length >= 2 && cells[0].trim() !== "") {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>
+              <input type="checkbox"
+                data-name="${cells[0].trim()}"
+                data-price="${cells[1].trim()}">
+            </td>
+            <td>${cells[0].trim()}</td>
+            <td>₹ ${cells[1].trim()}</td>
+
+            <!-- ✅ ADD TO CART COLUMN -->
+            <td>
+              <button class="cart-btn" onclick="addToCart(this)">
+                Add to Cart
+              </button>
+            </td>
+          `;
+
+          tbody.appendChild(row);
         }
       }
+    }
 
-      /* 🔍 CASE-INSENSITIVE SEARCH */
-      function searchProducts() {
-        const value = document.getElementById("searchBox").value.toLowerCase();
-        const rows = document.querySelectorAll("#product-table-body tr");
+    /* 🔍 CASE-INSENSITIVE SEARCH */
+    function searchProducts() {
+      const value = document.getElementById("searchBox").value.toLowerCase();
+      const rows = document.querySelectorAll("#product-table-body tr");
 
-        rows.forEach(row => {
-          const productName = row.children[1].innerText.toLowerCase();
-          row.style.display = productName.includes(value) ? "" : "none";
-        });
-      }
-    </script>
-  </head>
+      rows.forEach(row => {
+        const productName = row.children[1].innerText.toLowerCase();
+        row.style.display = productName.includes(value) ? "" : "none";
+      });
+    }
 
-  <body onload="loadProducts()">
+    /* ✅ ADD TO CART FUNCTION */
+    function addToCart(btn) {
+      const checkbox = btn.closest("tr").querySelector('input[type="checkbox"]');
+      checkbox.checked = true;
+      btn.innerText = "Added";
+      btn.disabled = true;
+    }
+  </script>
+</head>
 
-    <div class="logo-intro">
-      <img src="circle-cropped.png" width="180" height="180" />
-      <div>
-        <h1>महाराज जनरल स्टोर</h1>
-        <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
-      </div>
+<body onload="loadProducts()">
+
+  <div class="logo-intro">
+    <img src="circle-cropped.png" width="180" height="180" />
+    <div>
+      <h1>महाराज जनरल स्टोर</h1>
+      <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
     </div>
+  </div>
 
-    <hr />
+  <hr />
 
-    <h3>🛍️ Our Products & Prices</h3>
+  <h3>🛍️ Our Products & Prices</h3>
 
-    <!-- ✅ BUTTON + SEARCH PARALLEL -->
-    <div class="order-search-bar">
-      <button onclick="orderOnWhatsApp()" class="whatsapp-btn">
-        Place Your Order
-      </button>
+  <!-- ✅ BUTTON + SEARCH -->
+  <div class="order-search-bar">
+    <button onclick="orderOnWhatsApp()" class="whatsapp-btn">
+      Place Your Order
+    </button>
 
-      <input
-        type="text"
-        id="searchBox"
-        placeholder="🔍 Search product"
-        onkeyup="searchProducts()"
-      />
-    </div>
+    <input
+      type="text"
+      id="searchBox"
+      placeholder="🔍 Search product"
+      onkeyup="searchProducts()"
+    />
+  </div>
 
-    <table>
-      <tr>
-        <th>Select</th>
-        <th>Product Name</th>
-        <th>Price</th>
-      </tr>
-      <tbody id="product-table-body"></tbody>
-    </table>
+  <table>
+    <tr>
+      <th>Select</th>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Add to Cart</th> <!-- ✅ -->
+    </tr>
+    <tbody id="product-table-body"></tbody>
+  </table>
 
-    <script>
-      function orderOnWhatsApp() {
-        let selectedItems = [];
-        let total = 0;
+  <script>
+    function orderOnWhatsApp() {
+      let selectedItems = [];
+      let total = 0;
 
-        document.querySelectorAll(
-          '#product-table-body input[type="checkbox"]:checked'
-        ).forEach(cb => {
-          let name = cb.dataset.name;
-          let price = parseFloat(cb.dataset.price);
-          selectedItems.push(`${name} – ₹${price}`);
-          total += price;
-        });
+      document.querySelectorAll(
+        '#product-table-body input[type="checkbox"]:checked'
+      ).forEach(cb => {
+        let name = cb.dataset.name;
+        let price = parseFloat(cb.dataset.price);
+        selectedItems.push(`${name} – ₹${price}`);
+        total += price;
+      });
 
-        if (selectedItems.length === 0) {
-          alert("कृपया कम से कम एक प्रोडक्ट चुनें");
-          return;
-        }
-
-        let message =
-          "Hello, I want to order:\n\n" +
-          selectedItems.join("\n") +
-          "\n\nTotal: ₹" + total;
-
-        window.open(
-          "https://wa.me/919807439655?text=" +
-          encodeURIComponent(message),
-          "_blank"
-        );
+      if (selectedItems.length === 0) {
+        alert("कृपया कम से कम एक प्रोडक्ट चुनें");
+        return;
       }
-    </script>
 
-  </body>
+      let message =
+        "Hello, I want to order:\n\n" +
+        selectedItems.join("\n") +
+        "\n\nTotal: ₹" + total;
+
+      window.open(
+        "https://wa.me/919807439655?text=" +
+        encodeURIComponent(message),
+        "_blank"
+      );
+    }
+  </script>
+
+</body>
 </html>
