@@ -5,10 +5,7 @@
   <title>महाराज जनरल स्टोर</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; }
 
     table {
       border-collapse: collapse;
@@ -22,20 +19,7 @@
       text-align: left;
     }
 
-    th {
-      background-color: #f2f2f2;
-    }
-
-    .whatsapp-btn {
-      background-color: #25d366;
-      color: white;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+    th { background-color: #f2f2f2; }
 
     .cart-btn {
       background: #ff9800;
@@ -56,17 +40,21 @@
       margin-left: 8px;
     }
 
-    .order-search-bar {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+    .whatsapp-btn {
+      background-color: #25d366;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     #searchBox {
       padding: 8px;
       width: 220px;
+      margin-bottom: 10px;
     }
 
     .cart-box {
@@ -74,10 +62,6 @@
       padding: 12px;
       margin-top: 20px;
       width: 80%;
-    }
-
-    .cart-item {
-      margin-bottom: 6px;
     }
   </style>
 
@@ -100,7 +84,7 @@
 
         if (cells.length >= 2 && cells[0].trim()) {
           const name = cells[0].trim();
-          const price = cells[1].trim();
+          const price = parseFloat(cells[1].trim());
 
           const row = document.createElement("tr");
           row.innerHTML = `
@@ -118,8 +102,13 @@
     }
 
     function addToCart(name, price) {
-      if (cart.some(item => item.name === name)) return;
-      cart.push({ name, price });
+      const existing = cart.find(item => item.name === name);
+
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ name, price, qty: 1 });
+      }
       renderCart();
     }
 
@@ -135,11 +124,12 @@
       let total = 0;
 
       cart.forEach((item, index) => {
-        total += item.price;
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+
         const div = document.createElement("div");
-        div.className = "cart-item";
         div.innerHTML = `
-          ${item.name} – ₹${item.price}
+          ${item.name} × ${item.qty} = ₹${itemTotal}
           <button class="remove-btn" onclick="removeFromCart(${index})">❌</button>
         `;
         cartList.appendChild(div);
@@ -158,8 +148,8 @@
       let total = 0;
 
       cart.forEach(item => {
-        message += `${item.name} – ₹${item.price}\n`;
-        total += item.price;
+        message += `${item.name} × ${item.qty} – ₹${item.price * item.qty}\n`;
+        total += item.price * item.qty;
       });
 
       message += "\nTotal: ₹" + total;
@@ -188,14 +178,12 @@
 
   <h3>🛍️ Our Products & Prices</h3>
 
-  <div class="order-search-bar">
-    <input
-      type="text"
-      id="searchBox"
-      placeholder="🔍 Search product"
-      onkeyup="searchProducts()"
-    />
-  </div>
+  <input
+    type="text"
+    id="searchBox"
+    placeholder="🔍 Search product"
+    onkeyup="searchProducts()"
+  />
 
   <table>
     <tr>
