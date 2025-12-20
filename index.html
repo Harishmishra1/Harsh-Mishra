@@ -7,6 +7,20 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
 
+    .logo-intro {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .gallery img {
+      width: 300px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
     table {
       border-collapse: collapse;
       width: 80%;
@@ -21,38 +35,62 @@
 
     th { background-color: #f2f2f2; }
 
-    .qty-btn {
-      padding: 4px 8px;
-      font-size: 14px;
-      cursor: pointer;
-      border-radius: 4px;
+    .top-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 15px 0;
+    }
+
+    #searchBox {
+      padding: 8px;
+      width: 220px;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
       border: 1px solid #ccc;
       background: #f7f7f7;
-    }
-
-    .qty-btn:hover {
-      background: #eaeaea;
-    }
-
-    .qty-box {
-      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
       font-weight: bold;
     }
 
-    /* ✅ PROFESSIONAL REMOVE ICON */
-    .remove-btn {
-      background: transparent;
-      border: none;
+    .tab-btn.active {
+      background: #25d366;
+      color: white;
+      border-color: #25d366;
+    }
+
+    .qty-btn {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+      border-radius: 4px;
       cursor: pointer;
+    }
+
+    .qty-box {
+      padding: 0 8px;
+      font-weight: bold;
+    }
+
+    .cart-box {
+      border: 2px dashed #25d366;
+      padding: 12px;
+      width: 80%;
+      margin-top: 10px;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
       font-size: 16px;
-      margin-left: 8px;
+      cursor: pointer;
       color: #555;
     }
 
-    .remove-btn:hover {
-      color: #000;
-      transform: scale(1.1);
-    }
+    .remove-btn:hover { color: #000; }
 
     .whatsapp-btn {
       background-color: #25d366;
@@ -60,22 +98,8 @@
       padding: 10px 16px;
       border: none;
       border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
       font-weight: bold;
-    }
-
-    #searchBox {
-      padding: 8px;
-      width: 220px;
-      margin-bottom: 10px;
-    }
-
-    .cart-box {
-      border: 2px dashed #25d366;
-      padding: 12px;
-      margin-top: 20px;
-      width: 80%;
+      cursor: pointer;
     }
   </style>
 
@@ -86,36 +110,34 @@
       const csvUrl =
         "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
 
-      const response = await fetch(csvUrl);
-      const csvText = await response.text();
-      const lines = csvText.split("\n");
+      const res = await fetch(csvUrl);
+      const text = await res.text();
+      const lines = text.split("\n");
 
       const tbody = document.getElementById("product-table-body");
       tbody.innerHTML = "";
 
       for (let i = 1; i < lines.length; i++) {
-        const cells = lines[i].split(",");
+        let [name, price] = lines[i].split(",");
+        if (!name) continue;
 
-        if (cells.length >= 2 && cells[0].trim()) {
-          const name = cells[0].trim();
-          const price = parseFloat(cells[1].trim());
+        name = name.trim();
+        price = price.trim();
 
-          const row = document.createElement("tr");
-          row.innerHTML = `
+        tbody.innerHTML += `
+          <tr>
             <td>${name}</td>
             <td>₹ ${price}</td>
             <td>
-              <button class="qty-btn" onclick="changeQty('${name}', ${price}, -1)">−</button>
+              <button class="qty-btn" onclick="updateQty('${name}', ${price}, -1)">−</button>
               <span class="qty-box" id="qty-${name}">0</span>
-              <button class="qty-btn" onclick="changeQty('${name}', ${price}, 1)">+</button>
+              <button class="qty-btn" onclick="updateQty('${name}', ${price}, 1)">+</button>
             </td>
-          `;
-          tbody.appendChild(row);
-        }
+          </tr>`;
       }
     }
 
-    function changeQty(name, price, delta) {
+    function updateQty(name, price, delta) {
       let item = cart.find(p => p.name === name);
 
       if (!item && delta > 0) {
@@ -127,117 +149,153 @@
         }
       }
 
-      updateQtyUI(name);
+      document.getElementById(`qty-${name}`).innerText =
+        cart.find(p => p.name === name)?.qty || 0;
+
       renderCart();
     }
 
-    function updateQtyUI(name) {
-      const qtySpan = document.getElementById(`qty-${name}`);
-      const item = cart.find(p => p.name === name);
-      qtySpan.innerText = item ? item.qty : 0;
-    }
-
     function renderCart() {
-      const cartList = document.getElementById("cart-items");
-      cartList.innerHTML = "";
-
+      const box = document.getElementById("cart-items");
       let total = 0;
+      box.innerHTML = "";
 
-      cart.forEach((item, index) => {
-        const itemTotal = item.price * item.qty;
-        total += itemTotal;
-
-        const div = document.createElement("div");
-        div.innerHTML = `
-          ${item.name} × ${item.qty} = ₹${itemTotal}
-          <button class="remove-btn" onclick="removeOne(${index})" title="Remove one">✕</button>
-        `;
-        cartList.appendChild(div);
+      cart.forEach((item, i) => {
+        total += item.qty * item.price;
+        box.innerHTML += `
+          ${item.name} × ${item.qty} = ₹${item.qty * item.price}
+          <button class="remove-btn" onclick="removeOne(${i})">✕</button><br>`;
       });
 
       document.getElementById("cart-total").innerText = total;
     }
 
-    function removeOne(index) {
-      cart[index].qty -= 1;
-
-      if (cart[index].qty <= 0) {
-        const name = cart[index].name;
-        cart.splice(index, 1);
-        updateQtyUI(name);
-      } else {
-        updateQtyUI(cart[index].name);
-      }
-
+    function removeOne(i) {
+      cart[i].qty--;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
       renderCart();
     }
 
-    function placeOrderFromCart() {
+    function placeOrder() {
       if (cart.length === 0) {
-        alert("Cart is empty");
+        alert("कृपया पहले प्रोडक्ट जोड़ें");
         return;
       }
 
-      let message = "Hello, I want to order:\n\n";
+      let msg = "नमस्ते, मुझे निम्न सामान चाहिए:\n\n";
       let total = 0;
 
-      cart.forEach(item => {
-        message += `${item.name} × ${item.qty} – ₹${item.price * item.qty}\n`;
-        total += item.price * item.qty;
+      cart.forEach(i => {
+        msg += `${i.name} × ${i.qty} – ₹${i.qty * i.price}\n`;
+        total += i.qty * i.price;
       });
 
-      message += "\nTotal: ₹" + total;
+      msg += "\nकुल राशि: ₹" + total;
 
       window.open(
-        "https://wa.me/919807439655?text=" +
-        encodeURIComponent(message),
+        "https://wa.me/919807439655?text=" + encodeURIComponent(msg),
         "_blank"
       );
     }
 
-    function searchProducts() {
-      const value = document.getElementById("searchBox").value.toLowerCase();
+    function filterProducts() {
+      const q = document.getElementById("searchBox").value.toLowerCase();
       document.querySelectorAll("#product-table-body tr").forEach(row => {
-        row.style.display = row.children[0].innerText
-          .toLowerCase()
-          .includes(value)
-          ? ""
-          : "none";
+        row.style.display = row.innerText.toLowerCase().includes(q) ? "" : "none";
       });
+    }
+
+    function showProducts() {
+      document.getElementById("products-section").style.display = "block";
+      document.getElementById("cart-section").style.display = "none";
+    }
+
+    function showCart() {
+      document.getElementById("products-section").style.display = "none";
+      document.getElementById("cart-section").style.display = "block";
     }
   </script>
 </head>
 
-<body onload="loadProducts()">
+<body onload="loadProducts(); showProducts();">
+
+  <!-- LOGO & INTRO -->
+  <div class="logo-intro">
+    <img src="circle-cropped.png" width="180" height="180" />
+    <div>
+      <h1>महाराज जनरल स्टोर</h1>
+      <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
+      <p>
+        जहाँ गुणवत्ता मिले सस्ते दाम में – महाराज जनरल स्टोर! महाराज जनरल
+        स्टोर आपके शहर का विश्वसनीय किराना और पूजा सामग्री स्टोर है।
+        यहाँ पर आपको सभी दैनिक उपयोग की वस्तुएँ, पूजा सामग्री, मसाले,
+        तेल, आटा, दालें, स्नैक्स और घरेलू सामान एक ही जगह उचित दाम में मिलते हैं।
+      </p>
+    </div>
+  </div>
+
+  <hr />
+
+  <h3>📍 Store Address</h3>
+  <p>
+    Sangam Vihar Colony, Haveliya, Jhusi,<br />
+    Prayagraj, Uttar Pradesh 211019
+  </p>
+  <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">
+    View on Google Maps
+  </a>
+
+  <p>
+    🛒 ₹999 या उससे अधिक के ऑर्डर पर 100 मीटर की दूरी में मुफ्त डिलीवरी।<br>
+    🚚 ₹999 से कम के ऑर्डर पर डिलीवरी चार्ज ₹50 लागू।<br>
+    ⏰ डिलीवरी समय: दोपहर 1 बजे से 3 बजे और रात 8 बजे से 9 बजे तक।
+  </p>
+
+  <hr />
+
+  <h3>📸 Store Photos</h3>
+  <div class="gallery">
+    <img src="k1.jpg" alt="Store Front" />
+    <img src="k2.jpg" alt="Store Inside" />
+  </div>
+
+  <hr />
 
   <h3>🛍️ Our Products & Prices</h3>
 
-  <input
-    type="text"
-    id="searchBox"
-    placeholder="🔍 Search product"
-    onkeyup="searchProducts()"
-  />
-
-  <table>
-    <tr>
-      <th>Product Name</th>
-      <th>Price</th>
-      <th>Quantity</th>
-    </tr>
-    <tbody id="product-table-body"></tbody>
-  </table>
-
-  <div class="cart-box">
-    <h3>🛒 Your Cart</h3>
-    <div id="cart-items"></div>
-
-    <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
-
-    <button class="whatsapp-btn" onclick="placeOrderFromCart()">
-      Place Your Order
-    </button>
+  <div class="top-bar">
+    <input id="searchBox" placeholder="🔍 Search product" onkeyup="filterProducts()" />
+    <button class="tab-btn active" onclick="showProducts()">Products</button>
+    <button class="tab-btn" onclick="showCart()">🛒 Your Cart</button>
   </div>
+
+  <div id="products-section">
+    <table>
+      <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Add to Cart</th>
+      </tr>
+      <tbody id="product-table-body"></tbody>
+    </table>
+  </div>
+
+  <div id="cart-section" style="display:none;">
+    <div class="cart-box">
+      <h3>Your Cart</h3>
+      <div id="cart-items"></div>
+      <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
+      <button class="whatsapp-btn" onclick="placeOrder()">Place Your Order</button>
+    </div>
+  </div>
+
+  <hr />
+
+  <h3>About Us</h3>
+  <p>
+    हम आपके लिए ताज़ा, शुद्ध और किफ़ायती किराना सामान उपलब्ध कराते हैं।
+    गुणवत्ता, भरोसा और तेज़ सेवा ही हमारी पहचान है।
+  </p>
 
 </body>
 </html>
