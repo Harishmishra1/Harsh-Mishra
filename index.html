@@ -26,9 +26,12 @@
       font-size: 14px;
       cursor: pointer;
       border-radius: 4px;
-      border: none;
-      background: #ff9800;
-      color: white;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+    }
+
+    .qty-btn:hover {
+      background: #eaeaea;
     }
 
     .qty-box {
@@ -36,14 +39,19 @@
       font-weight: bold;
     }
 
+    /* ✅ PROFESSIONAL REMOVE ICON */
     .remove-btn {
-      background: #e53935;
-      color: white;
+      background: transparent;
       border: none;
-      padding: 3px 8px;
-      border-radius: 4px;
       cursor: pointer;
+      font-size: 16px;
       margin-left: 8px;
+      color: #555;
+    }
+
+    .remove-btn:hover {
+      color: #000;
+      transform: scale(1.1);
     }
 
     .whatsapp-btn {
@@ -142,7 +150,7 @@
         const div = document.createElement("div");
         div.innerHTML = `
           ${item.name} × ${item.qty} = ₹${itemTotal}
-          <button class="remove-btn" onclick="removeOne(${index})">❌</button>
+          <button class="remove-btn" onclick="removeOne(${index})" title="Remove one">✕</button>
         `;
         cartList.appendChild(div);
       });
@@ -150,7 +158,6 @@
       document.getElementById("cart-total").innerText = total;
     }
 
-    // ✅ REMOVE ONLY ONE QUANTITY
     function removeOne(index) {
       cart[index].qty -= 1;
 
