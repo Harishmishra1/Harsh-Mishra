@@ -7,13 +7,6 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
 
-    .logo-intro {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
     table {
       border-collapse: collapse;
       width: 80%;
@@ -30,67 +23,60 @@
 
     .qty-btn {
       padding: 4px 8px;
-      border: 1px solid #ccc;
-      background: #f7f7f7;
+      font-size: 14px;
       cursor: pointer;
       border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
     }
 
-    .qty-btn:hover { background: #eaeaea; }
+    .qty-btn:hover {
+      background: #eaeaea;
+    }
 
-    .qty-box { padding: 0 8px; font-weight: bold; }
+    .qty-box {
+      padding: 4px 10px;
+      font-weight: bold;
+    }
 
+    /* ✅ PROFESSIONAL REMOVE ICON */
     .remove-btn {
       background: transparent;
       border: none;
       cursor: pointer;
       font-size: 16px;
-      margin-left: 6px;
+      margin-left: 8px;
       color: #555;
     }
 
-    .remove-btn:hover { color: #000; }
+    .remove-btn:hover {
+      color: #000;
+      transform: scale(1.1);
+    }
 
     .whatsapp-btn {
-      background: #25d366;
+      background-color: #25d366;
       color: white;
       padding: 10px 16px;
       border: none;
       border-radius: 6px;
-      font-weight: bold;
+      font-size: 15px;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    #searchBox {
+      padding: 8px;
+      width: 220px;
+      margin-bottom: 10px;
     }
 
     .cart-box {
       border: 2px dashed #25d366;
       padding: 12px;
+      margin-top: 20px;
       width: 80%;
-      margin-top: 10px;
     }
-
-    .top-bar {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .tab-btn {
-      padding: 8px 14px;
-      border: 1px solid #ccc;
-      background: #f7f7f7;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-
-    .tab-btn.active {
-      background: #25d366;
-      color: white;
-      border-color: #25d366;
-    }
-
-    #searchBox { padding: 8px; width: 220px; }
   </style>
 
   <script>
@@ -101,135 +87,156 @@
         "https://docs.google.com/spreadsheets/d/1gUnQPlyJVKctXsGA2gshdUGJf1tmtVqAJQ_W1W-2nC8/export?format=csv";
 
       const response = await fetch(csvUrl);
-      const text = await response.text();
-      const lines = text.split("\n");
-      const tbody = document.getElementById("product-table-body");
+      const csvText = await response.text();
+      const lines = csvText.split("\n");
 
+      const tbody = document.getElementById("product-table-body");
       tbody.innerHTML = "";
 
       for (let i = 1; i < lines.length; i++) {
-        const [name, price] = lines[i].split(",");
-        if (!name) continue;
+        const cells = lines[i].split(",");
 
-        tbody.innerHTML += `
-          <tr>
-            <td>${name.trim()}</td>
-            <td>₹ ${price.trim()}</td>
+        if (cells.length >= 2 && cells[0].trim()) {
+          const name = cells[0].trim();
+          const price = parseFloat(cells[1].trim());
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${name}</td>
+            <td>₹ ${price}</td>
             <td>
               <button class="qty-btn" onclick="changeQty('${name}', ${price}, -1)">−</button>
               <span class="qty-box" id="qty-${name}">0</span>
               <button class="qty-btn" onclick="changeQty('${name}', ${price}, 1)">+</button>
             </td>
-          </tr>`;
+          `;
+          tbody.appendChild(row);
+        }
       }
     }
 
     function changeQty(name, price, delta) {
       let item = cart.find(p => p.name === name);
 
-      if (!item && delta > 0) cart.push({ name, price, qty: 1 });
-      else if (item) {
+      if (!item && delta > 0) {
+        cart.push({ name, price, qty: 1 });
+      } else if (item) {
         item.qty += delta;
-        if (item.qty <= 0) cart = cart.filter(p => p.name !== name);
+        if (item.qty <= 0) {
+          cart = cart.filter(p => p.name !== name);
+        }
       }
 
-      document.getElementById(`qty-${name}`).innerText =
-        cart.find(p => p.name === name)?.qty || 0;
-
+      updateQtyUI(name);
       renderCart();
     }
 
+    function updateQtyUI(name) {
+      const qtySpan = document.getElementById(`qty-${name}`);
+      const item = cart.find(p => p.name === name);
+      qtySpan.innerText = item ? item.qty : 0;
+    }
+
     function renderCart() {
-      const box = document.getElementById("cart-items");
-      box.innerHTML = "";
+      const cartList = document.getElementById("cart-items");
+      cartList.innerHTML = "";
+
       let total = 0;
 
-      cart.forEach((item, i) => {
-        total += item.qty * item.price;
-        box.innerHTML += `
-          ${item.name} × ${item.qty} = ₹${item.qty * item.price}
-          <button class="remove-btn" onclick="removeOne(${i})">✕</button><br>`;
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.innerHTML = `
+          ${item.name} × ${item.qty} = ₹${itemTotal}
+          <button class="remove-btn" onclick="removeOne(${index})" title="Remove one">✕</button>
+        `;
+        cartList.appendChild(div);
       });
 
       document.getElementById("cart-total").innerText = total;
     }
 
-    function removeOne(i) {
-      cart[i].qty--;
-      if (cart[i].qty <= 0) cart.splice(i, 1);
+    function removeOne(index) {
+      cart[index].qty -= 1;
+
+      if (cart[index].qty <= 0) {
+        const name = cart[index].name;
+        cart.splice(index, 1);
+        updateQtyUI(name);
+      } else {
+        updateQtyUI(cart[index].name);
+      }
+
       renderCart();
     }
 
     function placeOrderFromCart() {
-      let msg = "Hello, I want to order:\n\n";
+      if (cart.length === 0) {
+        alert("Cart is empty");
+        return;
+      }
+
+      let message = "Hello, I want to order:\n\n";
       let total = 0;
 
-      cart.forEach(i => {
-        msg += `${i.name} × ${i.qty} – ₹${i.qty * i.price}\n`;
-        total += i.qty * i.price;
+      cart.forEach(item => {
+        message += `${item.name} × ${item.qty} – ₹${item.price * item.qty}\n`;
+        total += item.price * item.qty;
       });
 
-      msg += "\nTotal: ₹" + total;
-      window.open("https://wa.me/919807439655?text=" + encodeURIComponent(msg));
+      message += "\nTotal: ₹" + total;
+
+      window.open(
+        "https://wa.me/919807439655?text=" +
+        encodeURIComponent(message),
+        "_blank"
+      );
     }
 
-    function showProducts() {
-      document.getElementById("products-section").style.display = "block";
-      document.getElementById("cart-section").style.display = "none";
-    }
-
-    function showCart() {
-      document.getElementById("products-section").style.display = "none";
-      document.getElementById("cart-section").style.display = "block";
+    function searchProducts() {
+      const value = document.getElementById("searchBox").value.toLowerCase();
+      document.querySelectorAll("#product-table-body tr").forEach(row => {
+        row.style.display = row.children[0].innerText
+          .toLowerCase()
+          .includes(value)
+          ? ""
+          : "none";
+      });
     }
   </script>
 </head>
 
-<body onload="loadProducts(); showProducts();">
+<body onload="loadProducts()">
 
-  <!-- ✅ SHOP DETAILS -->
-  <div class="logo-intro">
-    <img src="circle-cropped.png" width="160" />
-    <div>
-      <h1>महाराज जनरल स्टोर</h1>
-      <p><em>जहाँ हर ग्राहक हमारा परिवार है।</em></p>
-    </div>
-  </div>
+  <h3>🛍️ Our Products & Prices</h3>
 
-  <p>
-    Sangam Vihar Colony, Haveliya, Jhusi, Prayagraj – 211019<br>
-    <a href="https://share.google/S43snEszKCxEfAIOi" target="_blank">View on Google Maps</a>
-  </p>
+  <input
+    type="text"
+    id="searchBox"
+    placeholder="🔍 Search product"
+    onkeyup="searchProducts()"
+  />
 
-  <p>
-    🛒 ₹999+ पर मुफ्त डिलीवरी | ⏰ 1–3 PM & 8–9 PM
-  </p>
+  <table>
+    <tr>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Quantity</th>
+    </tr>
+    <tbody id="product-table-body"></tbody>
+  </table>
 
-  <hr>
+  <div class="cart-box">
+    <h3>🛒 Your Cart</h3>
+    <div id="cart-items"></div>
 
-  <!-- SEARCH + CART TAB -->
-  <div class="top-bar">
-    <input id="searchBox" placeholder="🔍 Search product" />
-    <button class="tab-btn active" onclick="showProducts()">Products</button>
-    <button class="tab-btn" onclick="showCart()">🛒 Your Cart</button>
-  </div>
+    <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
 
-  <!-- PRODUCTS -->
-  <div id="products-section">
-    <table>
-      <tr><th>Product</th><th>Price</th><th>Qty</th></tr>
-      <tbody id="product-table-body"></tbody>
-    </table>
-  </div>
-
-  <!-- CART -->
-  <div id="cart-section" style="display:none;">
-    <div class="cart-box">
-      <h3>Your Cart</h3>
-      <div id="cart-items"></div>
-      <p><strong>Total ₹ <span id="cart-total">0</span></strong></p>
-      <button class="whatsapp-btn" onclick="placeOrderFromCart()">Place Your Order</button>
-    </div>
+    <button class="whatsapp-btn" onclick="placeOrderFromCart()">
+      Place Your Order
+    </button>
   </div>
 
 </body>
