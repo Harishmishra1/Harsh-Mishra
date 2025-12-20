@@ -166,7 +166,27 @@ function renderProducts() {
   body.innerHTML = "";
 
   products
+    .filter(p => !p.offer) // exclude offer items
     .filter(p => p.name.toLowerCase().includes(q))
+    .forEach(p => {
+      const qty = cart[p.name] || 0;
+      body.innerHTML += `<tr>
+        <td>${p.name}</td>
+        <td>₹${p.price}</td>
+        <td>
+          <button class="qty-btn" onclick="updateQty('${p.name}',-1)">−</button>
+          ${qty}
+          <button class="qty-btn" onclick="updateQty('${p.name}',1)">+</button>
+        </td>
+      </tr>`;
+    });
+}
+
+function renderOffers() {
+  const body = document.getElementById("offer-body");
+  body.innerHTML = "";
+  products
+    .filter(p => p.offer) // only offer products
     .forEach(p => {
       const qty = cart[p.name] || 0;
       body.innerHTML += `<tr>
@@ -192,21 +212,7 @@ function showOffers() {
   document.getElementById("products-section").style.display="none";
   document.getElementById("offers-section").style.display="block";
   document.getElementById("cart-section").style.display="none";
-
-  const body = document.getElementById("offer-body");
-  body.innerHTML = "";
-  products.filter(p => p.offer).forEach(p => {
-    const qty = cart[p.name] || 0;
-    body.innerHTML += `<tr>
-      <td>${p.name}</td>
-      <td>₹${p.price}</td>
-      <td>
-        <button class="qty-btn" onclick="updateQty('${p.name}',-1)">−</button>
-        ${qty}
-        <button class="qty-btn" onclick="updateQty('${p.name}',1)">+</button>
-      </td>
-    </tr>`;
-  });
+  renderOffers();
 }
 
 function showCart() {
@@ -219,6 +225,7 @@ function showCart() {
 function updateQty(name, delta) {
   cart[name] = (cart[name] || 0) + delta;
   if (cart[name] <= 0) delete cart[name];
+
   renderProducts();
   renderOffers();
   renderCart();
