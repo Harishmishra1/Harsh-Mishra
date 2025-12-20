@@ -116,4 +116,91 @@
     }
 
     function renderCart() {
-      const cartList = document.getElementById(
+      const cartList = document.getElementById("cart-items");
+      cartList.innerHTML = "";
+
+      let total = 0;
+
+      cart.forEach(item => {
+        total += item.price;
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.textContent = `${item.name} – ₹${item.price}`;
+        cartList.appendChild(div);
+      });
+
+      document.getElementById("cart-total").innerText = total;
+    }
+
+    function placeOrderFromCart() {
+      if (cart.length === 0) {
+        alert("Cart is empty");
+        return;
+      }
+
+      let message = "Hello, I want to order:\n\n";
+      let total = 0;
+
+      cart.forEach(item => {
+        message += `${item.name} – ₹${item.price}\n`;
+        total += item.price;
+      });
+
+      message += "\nTotal: ₹" + total;
+
+      window.open(
+        "https://wa.me/919807439655?text=" +
+        encodeURIComponent(message),
+        "_blank"
+      );
+    }
+
+    function searchProducts() {
+      const value = document.getElementById("searchBox").value.toLowerCase();
+      document.querySelectorAll("#product-table-body tr").forEach(row => {
+        row.style.display = row.children[0].innerText
+          .toLowerCase()
+          .includes(value)
+          ? ""
+          : "none";
+      });
+    }
+  </script>
+</head>
+
+<body onload="loadProducts()">
+
+  <h3>🛍️ Our Products & Prices</h3>
+
+  <div class="order-search-bar">
+    <input
+      type="text"
+      id="searchBox"
+      placeholder="🔍 Search product"
+      onkeyup="searchProducts()"
+    />
+  </div>
+
+  <table>
+    <tr>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Add</th>
+    </tr>
+    <tbody id="product-table-body"></tbody>
+  </table>
+
+  <!-- 🛒 CART SECTION -->
+  <div class="cart-box">
+    <h3>🛒 Your Cart</h3>
+    <div id="cart-items"></div>
+
+    <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
+
+    <button class="whatsapp-btn" onclick="placeOrderFromCart()">
+      Place Your Order
+    </button>
+  </div>
+
+</body>
+</html>
