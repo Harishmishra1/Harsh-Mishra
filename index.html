@@ -30,16 +30,13 @@
       background: #f7f7f7;
     }
 
-    .qty-btn:hover {
-      background: #eaeaea;
-    }
+    .qty-btn:hover { background: #eaeaea; }
 
     .qty-box {
       padding: 4px 10px;
       font-weight: bold;
     }
 
-    /* ✅ PROFESSIONAL REMOVE ICON */
     .remove-btn {
       background: transparent;
       border: none;
@@ -68,7 +65,6 @@
     #searchBox {
       padding: 8px;
       width: 220px;
-      margin-bottom: 10px;
     }
 
     .cart-box {
@@ -76,6 +72,29 @@
       padding: 12px;
       margin-top: 20px;
       width: 80%;
+    }
+
+    /* ✅ TAB STYLES */
+    .top-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .tab-btn.active {
+      background: #25d366;
+      color: white;
+      border-color: #25d366;
     }
   </style>
 
@@ -150,7 +169,7 @@
         const div = document.createElement("div");
         div.innerHTML = `
           ${item.name} × ${item.qty} = ₹${itemTotal}
-          <button class="remove-btn" onclick="removeOne(${index})" title="Remove one">✕</button>
+          <button class="remove-btn" onclick="removeOne(${index})">✕</button>
         `;
         cartList.appendChild(div);
       });
@@ -205,38 +224,70 @@
           : "none";
       });
     }
+
+    /* ✅ TAB SWITCH */
+    function showProducts() {
+      document.getElementById("products-section").style.display = "block";
+      document.getElementById("cart-section").style.display = "none";
+      document.getElementById("productsTab").classList.add("active");
+      document.getElementById("cartTab").classList.remove("active");
+    }
+
+    function showCart() {
+      document.getElementById("products-section").style.display = "none";
+      document.getElementById("cart-section").style.display = "block";
+      document.getElementById("cartTab").classList.add("active");
+      document.getElementById("productsTab").classList.remove("active");
+    }
   </script>
 </head>
 
-<body onload="loadProducts()">
+<body onload="loadProducts(); showProducts();">
 
   <h3>🛍️ Our Products & Prices</h3>
 
-  <input
-    type="text"
-    id="searchBox"
-    placeholder="🔍 Search product"
-    onkeyup="searchProducts()"
-  />
+  <!-- ✅ SEARCH + CART TAB -->
+  <div class="top-bar">
+    <input
+      type="text"
+      id="searchBox"
+      placeholder="🔍 Search product"
+      onkeyup="searchProducts()"
+    />
 
-  <table>
-    <tr>
-      <th>Product Name</th>
-      <th>Price</th>
-      <th>Quantity</th>
-    </tr>
-    <tbody id="product-table-body"></tbody>
-  </table>
-
-  <div class="cart-box">
-    <h3>🛒 Your Cart</h3>
-    <div id="cart-items"></div>
-
-    <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
-
-    <button class="whatsapp-btn" onclick="placeOrderFromCart()">
-      Place Your Order
+    <button id="productsTab" class="tab-btn active" onclick="showProducts()">
+      Products
     </button>
+
+    <button id="cartTab" class="tab-btn" onclick="showCart()">
+      🛒 Your Cart
+    </button>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="products-section">
+    <table>
+      <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+      </tr>
+      <tbody id="product-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- CART -->
+  <div id="cart-section" style="display:none;">
+    <div class="cart-box">
+      <h3>🛒 Your Cart</h3>
+      <div id="cart-items"></div>
+
+      <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
+
+      <button class="whatsapp-btn" onclick="placeOrderFromCart()">
+        Place Your Order
+      </button>
+    </div>
   </div>
 
 </body>
