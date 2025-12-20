@@ -32,8 +32,6 @@ th { background:#f2f2f2; }
   font-size:16px;
   cursor:pointer;
   font-weight:bold;
-  margin-top:10px;
-  margin-bottom:10px;
 }
 
 .qty-btn {
@@ -90,18 +88,17 @@ Prayagraj, Uttar Pradesh 211019
 <h3>🛍️ Our Products & Prices</h3>
 
 <div class="tabs">
-  <button onclick="showProducts()">Products</button>
-  <button onclick="showOffers()">🎁 Offers For You</button>
-  <button onclick="showCart()">🛒 Your Cart</button>
+<button onclick="showProducts()">Products</button>
+<button onclick="showOffers()">🎁 Offers For You</button>
+<button onclick="showCart()">🛒 Your Cart</button>
 </div>
 
 <input id="searchBox" placeholder="Search product..." onkeyup="renderProducts()">
 
-<!-- ✅ Always-visible WhatsApp Order Button -->
-<button class="whatsapp-btn" onclick="orderOnWhatsApp()">Place Your Order</button>
-
 <!-- PRODUCTS -->
 <div id="products-section">
+<!-- ✅ Renamed button -->
+<button class="whatsapp-btn" onclick="orderOnWhatsApp()">Order on WhatsApp</button>
 <table>
 <thead><tr><th>Product</th><th>Price</th><th>Add</th></tr></thead>
 <tbody id="product-body"></tbody>
@@ -125,8 +122,8 @@ Prayagraj, Uttar Pradesh 211019
 
 <h3 id="totalAmount"></h3>
 
-<!-- Cart WhatsApp Order Button -->
-<button class="whatsapp-btn" onclick="orderOnWhatsApp()">Place Your Order</button>
+<!-- ✅ Renamed button -->
+<button class="whatsapp-btn" onclick="orderOnWhatsApp()">Order on WhatsApp</button>
 </div>
 
 <hr>
@@ -172,7 +169,7 @@ function renderProducts() {
   body.innerHTML = "";
 
   products
-    .filter(p => !p.offer)
+    .filter(p => !p.offer) // exclude offer items
     .filter(p => p.name.toLowerCase().includes(q))
     .forEach(p => {
       const qty = cart[p.name] || 0;
@@ -192,7 +189,7 @@ function renderOffers() {
   const body = document.getElementById("offer-body");
   body.innerHTML = "";
   products
-    .filter(p => p.offer)
+    .filter(p => p.offer) // only offer products
     .forEach(p => {
       const qty = cart[p.name] || 0;
       body.innerHTML += `<tr>
